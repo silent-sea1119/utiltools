@@ -43,7 +43,7 @@ def mkdir(path):
    #exists_ok prevents errors when dir already exists
    os.makedirs(path, exist_ok=True)
 
-@expandhome
+@expandhome1
 def ls(path='.', rec=False):
    """List files in current directory (default is current directory). Expands home (~)
 
@@ -57,7 +57,7 @@ def ls(path='.', rec=False):
    if not rec:
       return os.listdir(path)
    if rec:
-      return [os.path.join(dp, f) for dp, dn, fn in os.walk("~/files") for f in fn]
+      return [os.path.join(dp, f) for dp, dn, fn in os.walk(path) for f in fn]
 
 
 @expandhome
