@@ -44,13 +44,21 @@ def mkdir(path):
    os.makedirs(path, exist_ok=True)
 
 @expandhome
-def ls(path='.'):
+def ls(path='.', rec=False):
    """List files in current directory (default is current directory). Expands home (~)
 
    :param   path: Path to to list directories
    :type    path: str
+
+   :param   rec: is recursive?
+   :type    rec: bool
    """
-   return os.listdir(path)
+
+   if not rec:
+      return os.listdir(path)
+   if rec:
+      return [os.path.join(dp, f) for dp, dn, fn in os.walk("~/files") for f in fn]
+
 
 @expandhome
 def is_file(path):
