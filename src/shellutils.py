@@ -60,6 +60,23 @@ def ls(path='.', rec=False):
       return [os.path.join(dp, f) for dp, dn, fn in os.walk(path) for f in fn]
 
 
+#looks for file named conf_fname.
+#if not found, looks in parent directory
+def find_file_recursive_parent(conf_fname):
+   """Looks for conf_fname and returns full path
+      If not found, looks in parent directory until reaches /
+      If not found in parent, returns None"""
+   su_get_path = get_abs_path_relative_to
+   conf_path = su_get_path(conf_fname, '.')
+
+   while conf_path != '/':
+      test_path = join(conf_path, conf_fname)
+      if file_exists(test_path):
+         return test_path
+
+      conf_path = su_get_path(conf_path) #, '..')
+   return None
+
 @expandhome
 def is_file(path):
    """Check if given path is a file. Expands home (~)"""
