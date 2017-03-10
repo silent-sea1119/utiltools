@@ -1,3 +1,7 @@
 __pycache__
 *.swp
 *.pyc
+
+misc/setup/build
+misc/setup/dist
+misc/setup/utiltools.egg-info
