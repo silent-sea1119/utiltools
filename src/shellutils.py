@@ -537,3 +537,9 @@ class ProgressBar(object):
         sys.stdout.flush()
 
 
+def rand_str(length):
+   '''Generate random string'''
+   import string, random
+   available_chars = string.ascii_uppercase + string.digits
+   return ''.join(random.choice(available_chars) for _ in range(length))
+
