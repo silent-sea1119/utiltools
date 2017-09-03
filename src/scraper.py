@@ -39,7 +39,7 @@ def try_get_num(s, n):
    s = s.lower()
 
    c = s[n]
-   if c in ['①', '➊', '❶']:
+   if c in ['①', '➊', '❶', '¹']:
       return (1, 1)
    if c in ['➋', '❷', '②']:
       return (2, 1)
