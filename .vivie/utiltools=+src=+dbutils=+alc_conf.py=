@@ -2,7 +2,7 @@ let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 argglobal
 setlocal keymap=
 setlocal noarabic
-setlocal autoindent
+setlocal noautoindent
 setlocal backupcopy=
 setlocal nobinary
 setlocal nobreakindent
@@ -31,7 +31,7 @@ setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
-setlocal expandtab
+setlocal noexpandtab
 if &filetype != 'python'
 setlocal filetype=python
 endif
@@ -107,15 +107,29 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-17,33fold
-36,44fold
-47,60fold
-65,78fold
-let s:l = 65 - ((64 * winheight(0) + 33) / 67)
+5,16fold
+18,24fold
+26,39fold
+26,40fold
+42,62fold
+64,69fold
+71,74fold
+77,79fold
+81,88fold
+2,90fold
+2
+normal! zo
+26
+normal! zo
+26
+normal! zc
+2
+normal! zc
+let s:l = 2 - ((1 * winheight(0) + 15) / 31)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-65
+2
 normal! 0
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
