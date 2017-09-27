@@ -5,7 +5,7 @@ import time, datetime
 class AttrDict(dict):
    def __init__(self, *args, **kwargs):
       super(AttrDict, self).__init__(*args, **kwargs)
-	self.__dict__ = self
+      self.__dict__ = self
    #pass
 
 #x = ObjDict(); x.a = 4; x.b = 10; x.get_as_dict()
@@ -14,7 +14,7 @@ class ObjDict:
       pass
 
    def get_as_dict(self):
-	return self.__dict__
+      return self.__dict__
 
    #pass
 
