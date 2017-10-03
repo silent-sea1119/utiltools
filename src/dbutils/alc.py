@@ -5,6 +5,14 @@ from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, Float, 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import ForeignKey
 
+
+_boolc = Column(Boolean)
+_intc = Column(Integer)
+_floatc = Column(Float)
+_idc = Column(Integer, primary_key=True)
+_textc = Column(Text)
+_datetimetc = Column(DateTime)
+
 def idc():
    return Column(Integer, primary_key=True) #_idc
 def boolc():

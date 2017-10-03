@@ -65,6 +65,7 @@ def unix_to_datetime(x):
 def datetime_to_str(d):
    return d.strftime('%Y-%m-%d %H:%M:%S')
 
+
 def rand_str(length):
    '''Generate random string'''
    import string, random
