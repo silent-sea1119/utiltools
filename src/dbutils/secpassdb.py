@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 from multiprocessing import Lock
 import sqlite3
-from . import secpass
+
+#from . import secpass
+from utiltools import secpass
+
+
 #from pycloak.shellutils import file_exists
 from os.path import exists as file_exists
-#from . import secpass
 
 lock = Lock()
 #TODO: serialize username and password
 
 class PasswordDb:
-   '''PaswordDB'''
+   '''PaswordDB: secure user credential storage database'''
 
    def __init__(self, dbpath_or_conn = 'passwords.db',
                 create_new = False, get_next_id=None,
@@ -54,12 +57,16 @@ class PasswordDb:
       return False
 
    def get_user_hash(self, uname):
+      '''Get password has from username'''
       self.c.execute("SELECT pass_hash FROM userdata WHERE username = ?" % (uname, ))
       return self.c.fetchone()
 
    #0 = success, 1 = username taken, 2 = bad username, 3 = bad password
    #TODO: this is outdated:::: , 4 = SecurePass error
    def db_add_user(self, username, password):
+      '''Add new user
+         0 = success, 1 = username taken, 2 = bad username, 3 = bad password
+      '''
       if self.min_uname is not None and len(username) < self.min_uname:
          return 2
       if self.min_pass is not None and len(password) < self.min_pass:
@@ -92,6 +99,12 @@ class PasswordDb:
    #2 = username doesn't match (internal)
    #3 = password doesn't match, 4 = other error
    def db_check_user(self, username_check, password_check):
+      '''Check username/password combo
+         #0 = good password, 1 = username doesn't exist
+         #2 = username doesn't match (internal)
+         #3 = password doesn't match, 4 = other error
+      '''
+
       user_exists = self.check_if_user_exists(username_check)
       if not user_exists:
          return 1
@@ -116,7 +129,7 @@ class PasswordDb:
 
 
 
-#TESTS
+###TESTS
 
 def add_user(i):
    uname = 'user' + str(i)
@@ -150,6 +163,7 @@ def test_concurr():
       #p.map(add_user, range(i, i+5))
       #p2.map(check_user, range(i, i+5))
       #p.map(add_user, range(i, i+5))
+   pass
 
 #first run should print: 0 0 3 1, second run: 1 0 3 1
 def test_db(pdb):
@@ -171,4 +185,8 @@ if __name__ == '__main__':
    #test_concurr()
    test_db(pdb)
 
+   pass
+
+
+###END TESTS
 

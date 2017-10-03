@@ -30,5 +30,15 @@ Contents:
 .. automodule:: perm
    :members:
 
+.. automodule:: UserPermissions
+   :members:
+
+
+.. automodule:: atomicid
+   :members:
+
+.. automodule:: dbdict
+   :members:
+
 
 :members:

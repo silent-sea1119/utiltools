@@ -1,6 +1,8 @@
 import os.path, sqlite3
 
 class DbDict:
+   '''Sqlite3 dictionary implementation'''
+
    def __init__(self, db_path):
       self.db_path = db_path
 
@@ -14,7 +16,10 @@ class DbDict:
       if need_init:
          self.init_db()
 
+      pass #end __init__
+
    def init_db(self):
+      '''Internal function called from __init__ if table doesn't exist'''
       #create_str = 'CREATE VIRTUAL TABLE %s USING fts4'
       create_str = 'CREATE TABLE %s'
 
@@ -24,21 +29,27 @@ class DbDict:
       print(init_code)
       self.c.execute(init_code)
       #TODO: using whole string just to store integer? bad idea
-      self.c.execute('''%s (key string, val integer)''' % (create_str % 'str_int'))
-      self.c.execute('''%s (key integer, val string)''' % (create_str % 'int_str'))
-      self.c.execute('''%s (key integer, val integer)''' % (create_str % 'int_int'))
+      self.c.execute('''%s (key string PRIMARY KEY, val integer)''' % (create_str % 'str_int'))
+      self.c.execute('''%s (key integer PRIMARY KEY, val string)''' % (create_str % 'int_str'))
+      self.c.execute('''%s (key integer PRIMARY KEY, val integer)''' % (create_str % 'int_int'))
       self.conn.commit()
 
-   def set(self, key, val):
+   def set(self, key, val, table_name='str_str'):
+      '''Set key value'''
       #self.c.execute('INSERT INTO str_str VALUES (?, ?)', (key, val))
-      self.c.execute('INSERT OR REPLACE INTO str_str (key, val) VALUES (?, ?)', (key, val))
+      self.c.execute('INSERT OR REPLACE INTO %s (key, val) VALUES (?, ?)' % (table_name,), (key, val))
       self.conn.commit()
 
-   def get(self, key): #maybe pass defaultval
-      self.c.execute('SELECT val FROM str_str WHERE key = ?', (key, ))
+   def get(self, key, table_name='str_str'): #maybe pass defaultval
+      '''Get key value'''
+      self.c.execute('SELECT val FROM %s WHERE key = ?' % (table_name,), (key, ))
       ret = self.c.fetchone()[0]
       if ret is None:
          return ret
       else:
          return ret[0]
+      pass
+
+   #pass end DbDict
+
 

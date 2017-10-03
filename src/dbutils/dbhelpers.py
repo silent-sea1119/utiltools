@@ -9,6 +9,8 @@ def log(msg):
    print(msg)
 
 class Db(object):
+   '''Old Helper database class'''
+
    #dictionary of table names and their initialization code
    tables_need_exist = dict() #{ 'obj_ids', _init_obj_ids }
 

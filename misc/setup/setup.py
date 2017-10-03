@@ -10,7 +10,7 @@ setup(
    version=VER,
    author='Konstantin Kowalski',
    author_email='kostelkow@gmail.com',
-   packages=['utiltools'], #, 'utiltools.shellutils'],
-   package_dir={'utiltools': '../../src'},
+   packages=['utiltools', 'utiltools.dbutils'], #, 'utiltools.shellutils'],
+   package_dir={'utiltools': '../../src', 'dbutils': '../../src/dbutils'},
    description='Misc tools'
 )

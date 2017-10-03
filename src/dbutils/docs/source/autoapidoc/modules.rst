@@ -1,7 +1,7 @@
-user_acc
-========
+dbutils
+=======
 
 .. toctree::
    :maxdepth: 4
 
-   user_acc
+   dbutils

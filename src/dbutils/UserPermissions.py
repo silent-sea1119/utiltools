@@ -9,6 +9,8 @@ from . import dbhelpers, atomicid
 
 #users and groups need to be unique
 class UserPermissions(dbhelpers.Db):
+   '''User/Groups database'''
+
    #TODO: can make more generic, and each permission is a Tag
    def _init_perm_table(self):
       #TODO: remove this logic

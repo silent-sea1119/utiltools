@@ -36,6 +36,7 @@ class Db:
       self.exec_cmd(cmd)
 
    def get_len(self):
+      '''Get table row count'''
       cmd = 'SELECT Count(*) FROM %s' % (self.table_name,)
       ret = self.exec_cmd(cmd, is_fetch=True)
       return ret
@@ -47,6 +48,9 @@ class Db:
    def exec_cmd(self, cmd, args=None,
                 is_fetch=False, is_fetch_mult=False,
                 mult_fetch_max_args=None):
+      '''Execute database command
+
+      '''
       self.c = self.conn.cursor()
 
       if args is not None:
@@ -79,6 +83,8 @@ class Db:
 
 
    def search(self, search_col, search_val, search_max=100):
+      '''Search table'''
+
       args = (self.table_name, search_col)
       cmd = "SELECT * FROM %s WHERE %s LIKE ?" % args
       va_args = {
@@ -97,6 +103,8 @@ class Db:
       pass
 
    def insert(self, vals):
+      '''Insert value into table'''
+
       cmd = 'INSERT INTO %s VALUES (' % (self.table_name,)
 
       for i, x in enumerate(vals):
@@ -109,6 +117,9 @@ class Db:
       print(cmd)
       self.exec_cmd(cmd, args=tuple(vals))
 
+      pass #end insert
+
+   pass end Db
 
 ########################
 
