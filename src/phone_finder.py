@@ -29,10 +29,9 @@ str_nums = [
 
 
 def isalpha(n):
-   n.isalpha()
-
+   return n.isalpha()
 def isdigit(n):
-   n.isdigit()
+   return n.isdigit()
 
 
 def try_get_num(s, n):
@@ -55,6 +54,8 @@ def try_get_num(s, n):
       return (7, 1)
    if c == '⑨':
       return (9, 1)
+   if c == '💯':
+      return (100, 1)
 
 
    all_nums1 = "0➊➋➌➍➎➏➐➑➒➓"
@@ -66,18 +67,20 @@ def try_get_num(s, n):
    for i, x in enumerate(all_nums2):
       if c == x:
          return (i, 1)
-
+      pass #end for loop
 
    if s[n].isdigit():
       try:
          return (int(s[n]), 1)
       except Exception as e:
          pass
+      pass #end if
 
    for i, check1 in enumerate(str_nums):
       check2 = s[n:n+len(check1)]
       if check1 == check2:
          return (i, len(check1))
+      pass #endfor
 
    return (None, None)
 
@@ -156,7 +159,7 @@ def test():
       print('\texpected:\t', y)
       assert(all_nums == y)
 
-
+   pass #end test
 
 #test()
 
