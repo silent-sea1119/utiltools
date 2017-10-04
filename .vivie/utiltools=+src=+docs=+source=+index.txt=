@@ -2,7 +2,7 @@ let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 argglobal
 setlocal keymap=
 setlocal noarabic
-setlocal noautoindent
+setlocal autoindent
 setlocal backupcopy=
 setlocal nobinary
 setlocal nobreakindent
@@ -31,9 +31,9 @@ setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
-setlocal noexpandtab
-if &filetype != 'python'
-setlocal filetype=python
+setlocal expandtab
+if &filetype != 'rst'
+setlocal filetype=rst
 endif
 setlocal fixendofline
 setlocal foldcolumn=0
@@ -92,13 +92,13 @@ setlocal statusline=
 setlocal suffixesadd=
 setlocal swapfile
 setlocal synmaxcol=3000
-if &syntax != 'python'
-setlocal syntax=python
+if &syntax != 'rst'
+setlocal syntax=rst
 endif
 setlocal tabstop=6
 setlocal tagcase=
 setlocal tags=
-setlocal textwidth=0
+setlocal textwidth=190
 setlocal thesaurus=
 setlocal noundofile
 setlocal undolevels=-123456
@@ -107,18 +107,12 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-21,27fold
-2,29fold
-2
-normal! zo
-2
-normal! zc
-let s:l = 10 - ((9 * winheight(0) + 32) / 65)
+let s:l = 46 - ((45 * winheight(0) + 32) / 65)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-10
-normal! 01|
+46
+normal! 026|
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :
