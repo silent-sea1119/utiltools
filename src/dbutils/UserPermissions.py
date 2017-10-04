@@ -305,6 +305,7 @@ class UserPermissions(dbhelpers.Db):
          if perms.get_status() != 0:
             return (4, 'bad_perm', perms.get_status())
          return perms
+      pass #end get_resource_group_perms
 
    #get_resource_user_perms(resname, uname) => Perm()
    #1 = (1, perm) = good perm
@@ -349,6 +350,17 @@ class UserPermissions(dbhelpers.Db):
    #decorator. Passes arg "allowed"
    def resource_name(name):
       pass
+
+   #TODO:# !!!
+   def resource(func): #decrator
+      def func_wrapper(resource):
+         if allowed():
+            return func(resource)
+         else:
+            print('error')
+            return perm_denied()
+
+      return func_wrapper
 
    #get_user_list() => [str]
    def get_user_list(self):

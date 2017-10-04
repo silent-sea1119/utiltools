@@ -5,24 +5,29 @@ from .dbdict import DbDict
 #from secpass import PasswordDb
 from .secpassdb import PasswordDb
 
+import sqlite_wrapper
+
 def log(msg):
    print(msg)
 
-class Db(object):
+class UtilDb(sqlite_wrapper.Db):
    '''Old Helper database class'''
 
    #dictionary of table names and their initialization code
    tables_need_exist = dict() #{ 'obj_ids', _init_obj_ids }
 
    def __init__(self, dbpath):
-      self.dbpath = dbpath
+      #self.dbpath = dbpath
 
       #self.need_init_all = False
       #if not os.path.exists(dbpath):
       #   self.need_init_all = True
       #   log('need to initialize all tables')
 
-      self.conn = sqlite3.connect(dbpath, check_same_thread=False)
+      super().__init__(dbpath)
+
+   def setup(self):
+      #self.conn = sqlite3.connect(dbpath, check_same_thread=False)
       self.c = self.conn.cursor()
 
       accounts_exist = self.check_if_table_exists('userdata')
@@ -37,17 +42,9 @@ class Db(object):
       #self.tables_need_exist['obj_ids'] = self._init_obj_ids
       self.init_tables()
 
-   def check_if_table_exists(self, tableName):
-      self.c.execute('''SELECT name FROM sqlite_master
-                        WHERE type='table' AND name=?''', (tableName,))
-      ret = self.c.fetchone()
-      if ret is None:
-         return False
-      else:
-         return True
 
    #classes that inerit need to initialize
-   #tables_need_exist first and the call this
+   #tables_need_to exist first and then call this
    def init_tables(self):
       for name in self.tables_need_exist:
          need_init = False
@@ -72,23 +69,30 @@ class Db(object):
 
    ###
    def get_obj_id(self, need_lock=True):
+      '''Get next random id'''
       return self.objids.get_id(need_lock)
 
    def dset(self, key, val):
-      self.dbdict.set(key, val)
+      '''Dictionary set'''
+      return self.dbdict.set(key, val)
    def dget(self, key, val):
+      '''Dictionary get'''
       return self.dbdict.get(key)
 
-   def account_exists(self, uname):
-      return self.accounts.check_if_user_exists(uname)
+   def account_exists(self, uname=None, email=None):
+      '''Check if username exists'''
+      return self.accounts.check_if_user_exists(uname=uname, email=email)
 
    #0 = success, 1 = username taken, 2 = bad username, 3 = bad password
-   def add_account(self, uname, passw):
-      return self.accounts.db_add_user(uname, passw)
+   def add_account(self, passw, uname=None, email=None):
+      '''Add account with username/password combo'''
+      return self.accounts.db_add_user(passw, uname=ename, email=email)
+
    #0 = good password, 1 = username doesn't exist
    #2 = username doesn't match (internal check)
    #3 = password doesn't match, 4 = other error
-   def check_account_match(self, uname, passw):
+   def check_account_match(self, passw, uname=None, email=None):
+      '''Check if username matches password'''
       return self.accounts.db_check_user(uname, passw)
 
    #pass

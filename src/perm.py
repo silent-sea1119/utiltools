@@ -24,7 +24,21 @@ import sqlite3, os.path, json
 #x.has_read(), x.has_write(), x.has_admin(), x.has_super_admin()
 
 ######################
+
 class Perm(object):
+   '''Permission
+
+   ``perms = Perm([Perm.ADMIN, Perm.SUPER, Perm.READ, Perm.WRITE])``
+
+   ``x = Perm(Perm.ADMIN | Perm.WRITE)``
+
+   ``x.get_status() == 0``
+
+   ``x.has_read(), x.has_write(), x.has_admin(), x.has_super_admin()``
+
+
+   '''
+
    ADMIN = (1 << 0)
    SUPER = (1 << 1)
    READ = (1 << 2)
@@ -118,12 +132,16 @@ class Perm(object):
       pass #end __init__()
 
    def has_read(self):
+      '''Has read'''
       return (self.val & Perm.READ) is not 0
    def has_write(self):
+      '''Has write'''
       return (self.val & Perm.WRITE) is not 0
    def has_admin(self):
+      '''Has admin'''
       return (self.val & Perm.ADMIN) is not 0
    def has_super_admin(self):
+      '''Has super admin'''
       return (self.val & Perm.SUPER) is not 0
 
    #pass #end class Perm

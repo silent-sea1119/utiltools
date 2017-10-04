@@ -1,10 +1,11 @@
 import sqlite3, json
 import uuid
 
+
 class Db:
    '''Database Helper Class'''
 
-   def __init__(self, path, table_name): #path = 'test.db'
+   def __init__(self, path, table_name=None): #path = 'test.db'
       '''
 
       Args:
@@ -17,7 +18,12 @@ class Db:
 
       self.setup() #derived class function
 
+   def setup(self):
+      '''Virtual function for creating tables/etc'''
+      raise NotImplementedError("Abstract class, child must over-write")
+
    def init_db_setup(self, columns):
+      '''Creates table from columns'''
       cmd = 'CREATE TABLE if not exists %s (' % (self.table_name, )
 
       for i, col in enumerate(columns):
@@ -34,6 +40,17 @@ class Db:
 
       print(cmd)
       self.exec_cmd(cmd)
+
+   def check_if_table_exists(self, tableName=None):
+      self.c.execute('''SELECT name FROM sqlite_master
+                        WHERE type='table' AND name=?''', (tableName,))
+      ret = self.c.fetchone()
+      if ret is None:
+         return False
+      else:
+         return True
+
+      pass #end check_if_table_exists
 
    def get_len(self):
       '''Get table row count'''
@@ -81,7 +98,6 @@ class Db:
 
       return ret
 
-
    def search(self, search_col, search_val, search_max=100):
       '''Search table'''
 
@@ -97,6 +113,7 @@ class Db:
 
    #def get_single_by_column(self, col_name, col_val):
    #   cmd = "SELECT * FROM %s WHERE %s = ?" % (self.table_name, col_name)
+   #pass
 
    def insert_list(self, lst):
       #self.c.executemany('INSERT INTO %s VALUES ('
@@ -119,7 +136,8 @@ class Db:
 
       pass #end insert
 
-   pass end Db
+   pass #end Db
+
 
 ########################
 
@@ -145,6 +163,7 @@ class PostDb(Db):
       print(ret)
       return ret
 
+   #pass
 
 
 

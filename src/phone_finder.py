@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import data
+#import data
 
 '''
 
@@ -136,6 +136,7 @@ def parse_phone(s, start_in=None):
 
 
 def get_all_nums(s):
+   '''Get all phone numbers from given text'''
    nums = []
 
    x = parse_phone(s)

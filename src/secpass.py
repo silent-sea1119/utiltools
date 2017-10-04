@@ -61,6 +61,7 @@ def generate_prepend(prepend_len=5):
 
 #####USE THIS returns hash json
 def gen_pass_hash(password, data_str=None):
+   '''Generate has for given password'''
    salt = None
    prepend = None
    #if len(password) < 8:
@@ -84,6 +85,7 @@ def gen_pass_hash(password, data_str=None):
 
 #####USE THIS
 def check_pass_match(pass_str_input, hash_json_str):
+   '''Check if given password matches hash'''
    origin_data = json.loads(hash_json_str)
    new_hash_str = gen_pass_hash(pass_str_input, hash_json_str)
    if new_hash_str is None:
