@@ -12,5 +12,5 @@ class AccountManagerSqlite(AccountManager):
    def user_get_id_from_name(self, uname=None, email=None):
       return self.p._get_uid(uname, email)
 
-   def user_exists(self, uname, email=None):
+   def user_exists(self, uname=None, email=None):
       return self.p._user_exists(self, uname)

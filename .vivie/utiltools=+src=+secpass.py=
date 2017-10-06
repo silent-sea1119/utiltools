@@ -112,11 +112,11 @@ silent! normal! zE
 46,53fold
 63,84fold
 87,94fold
-let s:l = 1 - ((0 * winheight(0) + 32) / 65)
+let s:l = 105 - ((0 * winheight(0) + 32) / 65)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
+105
 normal! 0
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
