@@ -1,18 +1,40 @@
 
 import sqlite3, os.path, json
 #from flask import Flask, request, send_from_directory
-from . import dbhelpers, atomicid
+
+#for docs
+import sys
+
+try:
+   import dbhelpers, atomicid
+except Exception as e:
+   from . import dbhelpers, atomicid
 
 #app = Flask(__name__)
 #DB_PATH = '/tmp/permtest.db'
 
 
+'''This file implements user/group stuff.
+
+User Authentication and password salt storage are in dbhelpers.UtilDb.
+
+I wrote this class a long time ago, so it's pretty messy.
+
+
+For a clean authentication interface, check out dbutils/account_manager.py. It combines password storage and group/resource permission stuff.
+
+Concrete implementation of AccountManager can be found in account_manager_sqlite.py. If you need something more heavy-duty, you can easily implement your own AccountManager with a different database or whatever you need.
+'''
+
+
+
 #users and groups need to be unique
-class UserPermissions(dbhelpers.Db):
+class UserPermissions(dbhelpers.UtilDb):
    '''User/Groups database'''
 
    #TODO: can make more generic, and each permission is a Tag
    def _init_perm_table(self):
+      '''Internal function to create table'''
       #TODO: remove this logic
       #if self.check_if_table_exists('perm_groups'):
       #   return
@@ -36,13 +58,15 @@ class UserPermissions(dbhelpers.Db):
       #self.init_tables()
 
    def _get_gid(self, gname):
+      '''Get id from group name'''
       self.c.execute('SELECT objid FROM perm_groups WHERE name = ?', (gname, ))
       gid = self.c.fetchone()
       if gid is None:
          return None
       return gid[0]
 
-   def _get_uid(self, uname):
+   def _get_uid(self, uname=None, email=None):
+      '''Get id from user name'''
       self.c.execute('SELECT objid FROM perm_users WHERE name = ?', (uname, ))
       uid = self.c.fetchone()
       if uid is None or ((type(uid) is tuple) and uid[0] is None):
@@ -51,6 +75,13 @@ class UserPermissions(dbhelpers.Db):
 
    #1 = success, 2 = failure already exists, 3 = failure bad name (short at least 4 chars)
    def new_user(self, uname):
+      '''Create new user
+
+      Return
+         1 = success
+         2 = failure, user already exists
+         3 = failure (bad username)
+      '''
       if len(uname) < 4:
          return 3
       if self._get_uid(uname) is not None:
@@ -60,12 +91,21 @@ class UserPermissions(dbhelpers.Db):
       return 1
 
    def user_exists(self, uname):
+      '''Check if username exists'''
       if self._get_uid(uname) is not None:
          return True
       return False
 
    #1 = sucess, 2 = user never existed, (possibly 3 = user is admin)
    def rm_user(self, uname):
+      '''Remove user
+
+      Return:
+         1 = success
+         2 = user doesn't exist (but could've existed at some point in the past)
+         3 = user is admin (future TODO)
+      '''
+
       self.c.execute('SELECT objid FROM perm_users WHERE name = ?', (uname, ))
       uId = self.c.fetchone()
 
@@ -78,6 +118,12 @@ class UserPermissions(dbhelpers.Db):
 
    #1 = success, 2 = already exists
    def new_group(self, groupname):
+      '''Create new group
+
+      Return:
+         1 = success
+         2 = already exists
+      '''
       if self._get_gid(groupname) is not None:
          return 2
       self.c.execute('INSERT INTO perm_groups VALUES (?, ?)', (self.get_obj_id(), groupname))
@@ -86,6 +132,12 @@ class UserPermissions(dbhelpers.Db):
 
    #1 = success, 2 = failure doesn't exist
    def rm_group(groupname):
+      '''Remove group name
+
+      Returns:
+         1 = success
+         2 = failure, doesn't exist
+      '''
       groupId = self._get_gid(groupname)
       if groupId is None:
          return 2
@@ -99,6 +151,14 @@ class UserPermissions(dbhelpers.Db):
    #3 = user doesn't exist
    #4 = user already in group
    def add_user_to_group(self, groupname, uname):
+      '''Add user to a group
+
+      Returns:
+         1 = success
+         2 = group doesn't exist
+         3 = user doesn't exist
+         4 = user already in group
+      '''
       gId = self._get_gid(groupname)
       if gId is None:
          return 2
@@ -121,6 +181,14 @@ class UserPermissions(dbhelpers.Db):
    #3 = user doesn't exist
    #4 = user not in group
    def rm_user_from_group(self, groupname, uname):
+      '''Remove user from a group
+
+      Returns:
+         1 = success
+         2 = group doesn't exist
+         3 = user doesn't exist
+         4 = user not in group
+      '''
       gId = self._get_gid(groupname)
       if gId is None:
          return 2
@@ -141,6 +209,7 @@ class UserPermissions(dbhelpers.Db):
 
    #get_user_name_from_id(uid) => uname or None
    def get_user_name_from_id(self, uid):
+      '''Get user name from id'''
       self.c.execute('SELECT name from perm_users WHERE objid = ?', (uid, ))
       ret = self.c.fetchone()
       if ret is None:
@@ -149,6 +218,7 @@ class UserPermissions(dbhelpers.Db):
 
    #get_group_name_from_id(gid): returns None or gid
    def get_group_name_from_id(self, gid):
+      '''Get group name from id'''
       self.c.execute('SELECT name from perm_groups WHERE objid = ?', (gid, ))
       ret = self.c.fetchone()
       if ret is None:
@@ -162,6 +232,15 @@ class UserPermissions(dbhelpers.Db):
    #3 = get_user_group_ids returned bad type
    #4 = couldn't get name of one of the group_id's
    def get_user_groups(self, uname):
+      '''Get a list of group names that a user is part of
+
+      Returns:
+         list = success
+         2  = user doesn't exist
+         3  = get_user_group_ids returned bad type
+         4 = couldn't get name of one of the group_id's
+      '''
+
       gIds = self.get_user_group_ids(uname)
       if type(gIds) is int:
          return gIds
@@ -181,6 +260,7 @@ class UserPermissions(dbhelpers.Db):
    #(wrong) 1 = success
    #2 = user doesn't exist
    def get_user_group_ids(self, uname):
+      '''Get a list of group_id's that a user is part off'''
       uId = self._get_uid(uname)
       if uId is None:
          return 2
@@ -194,6 +274,7 @@ class UserPermissions(dbhelpers.Db):
       return ret
 
    def _get_rid(self, res_name):
+      '''Get resource id from name'''
       self.c.execute('SELECT objid FROM perm_resources WHERE name = ?', (res_name, ))
       rid = self.c.fetchone()
       if rid is None:
@@ -219,6 +300,14 @@ class UserPermissions(dbhelpers.Db):
    #3 = one of groups doesn't exist
    #declare resource, and its access rights
    def new_resource(self, res_name): #, groups=[]):
+      '''Create new resource
+
+         Returns:
+            1 = success
+            2 = resource name already exists
+            3 = one of groups doesn't exist
+      '''
+
       rid = self._get_rid(res_name)
       if rid is not None:
          return 2
@@ -347,20 +436,6 @@ class UserPermissions(dbhelpers.Db):
    #def modify_resource_rights(res_name):
    #   pass
 
-   #decorator. Passes arg "allowed"
-   def resource_name(name):
-      pass
-
-   #TODO:# !!!
-   def resource(func): #decrator
-      def func_wrapper(resource):
-         if allowed():
-            return func(resource)
-         else:
-            print('error')
-            return perm_denied()
-
-      return func_wrapper
 
    #get_user_list() => [str]
    def get_user_list(self):

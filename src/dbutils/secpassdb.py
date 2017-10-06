@@ -17,7 +17,7 @@ class PasswordDb:
 
    def __init__(self, dbpath_or_conn = 'passwords.db',
                 create_new = False, get_next_id=None,
-                min_uname=6, min_pass=8):
+                min_uname=6, min_pass=8, min_email=10):
       """Init function
 
       Args:
@@ -37,75 +37,134 @@ class PasswordDb:
 
       self.min_uname = min_uname #if None, then don't check
       self.min_pass = min_pass #if passed None, then don't check
+      self.min_email = min_email
 
       if create_new:
          self.init_empty_db()
 
    def init_empty_db(self):
       self.c.execute('''CREATE TABLE userdata
-                        (objid number, username text, pass_hash text)''')
+                        (objid number, username text, email text, pass_hash text)''')
       self.conn.commit()
+      pass
 
-   def check_if_user_exists(self, uname):
+   def check_if_user_exists(self, uname=None, email=None):
       """Checks if user exists
 
       Tests
       """
-      self.c.execute("SELECT username FROM userdata WHERE username = ?", (uname, ))
-      if self.c.fetchone() != None:
-         return True
+      if uname is not None:
+         self.c.execute("SELECT username FROM userdata WHERE username = ?", (uname, ))
+         if self.c.fetchone() != None:
+            return True
+      if email is not None:
+         self.c.execute("SELECT username FROM userdata WHERE email = ?", (email, ))
+         if self.c.fetchone() != None:
+            return True
+
       return False
 
-   def get_user_hash(self, uname):
+   def _get_user_hash(self, uid):
       '''Get password has from username'''
-      self.c.execute("SELECT pass_hash FROM userdata WHERE username = ?" % (uname, ))
+      self.c.execute("SELECT pass_hash FROM userdata WHERE objid = ?" % (uid, ))
       return self.c.fetchone()
 
-   #0 = success, 1 = username taken, 2 = bad username, 3 = bad password
-   #TODO: this is outdated:::: , 4 = SecurePass error
-   def db_add_user(self, username, password):
+   def new_user(self, password, uname=None, email=None):
       '''Add new user
-         0 = success, 1 = username taken, 2 = bad username, 3 = bad password
+
+         :param password: new user password
+         :type password: string
+
+         :param uname: new username
+         :type uname: string
+
+         :param email: user's email
+         :type email: string
+
+         :return: status code
+         :rtype: int
+
+         .. note::
+            Status codes:
+               * 0 = success
+               * 1 = bad password
+               * 2 = bad username
+               * 3 = bad email
+               * 4 = no email and no uname
+               * 5 = username taken
+               * 6 = email taken
       '''
-      if self.min_uname is not None and len(username) < self.min_uname:
-         return 2
+
+      ###CODE
+
       if self.min_pass is not None and len(password) < self.min_pass:
-         return 3
+         return 1
+
+      if uname is not None:
+         if self.min_uname is not None and len(uname) < self.min_uname:
+            return 2
+
+      if email is not None:
+         if self.min_email is not None and len(email) < self.min_email:
+            return 3
+
+      if uname is None and email is None:
+         return 4
 
       #kkkkkkk might needs this
       #kkkkkkk lock.acquire()
-      does_exist = self.check_if_user_exists(username)
-      if does_exist:
-         #kkkk might need this #lock.release()
-         return 1
+      if uname is not None:
+         does_exist = self.check_if_user_exists(uname=uname)
+         if does_exist:
+            #kkkk might need this #lock.release()
+            return 5
+      if email is not None:
+         if self.check_if_user_exists(email=email)
+         if does_exist:
+            return 6
 
       nextId = self.get_next_id(need_lock=False)
       pass_hash = secpass.gen_pass_hash(password)
-      #sp = secpass.SecurePassword()
-      #new_user = sp.set_pass(password)
-      #if new_user is None:
-      #   return 4
-      #(phash, salt, prepend) = new_user
-      #kkkkkkkkk might need this
-      #kkkkkkkkk lock.release()
-      args = (nextId, username, pass_hash) #pass_hash.replace('"', '""'))
-      cmd = 'INSERT INTO userdata VALUES (?, ?, ?)'
+
+      #kkkkkkkkk lock.release() #kkkkkkkkk might need this
+
+      args = (nextId, username, email, pass_hash) #pass_hash.replace('"', '""'))
+      cmd = 'INSERT INTO userdata VALUES (?, ?, ?, ?)'
       self.c.execute(cmd, args)
       self.conn.commit()
       #lock.release()
       return 0
 
-   #0 = good password, 1 = username doesn't exist
-   #2 = username doesn't match (internal)
-   #3 = password doesn't match, 4 = other error
-   def db_check_user(self, username_check, password_check):
+      ###END CODE
+
+      pass #end db_add_user
+
+   def check_user_login(self, username_check, email_check, password_check):
       '''Check username/password combo
-         #0 = good password, 1 = username doesn't exist
-         #2 = username doesn't match (internal)
-         #3 = password doesn't match, 4 = other error
+
+      :param username_check: username to check
+      :type username_check: string
+
+      :param email_check: email to check
+      :type email_check: string
+
+
+      :param password_check: password to check
+      :type oassword_check: string
+
+      :return: status code
+      :rtype: int
+
+      .. note::
+         Statuses:
+         * 0 = good password
+         * 1 = username/email doesn't exist
+         * 2 = username/email doesn't match (internal)
+         * 3 password doesn't match
+         * 4 = other error
       '''
 
-      user_exists = self.check_if_user_exists(username_check)
+      user_exists = self.check_if_user_exists(username_check, email_check)
       if not user_exists:
          return 1
 
@@ -115,9 +174,9 @@ class PasswordDb:
          return 4
 
       #(uname, phash, salt, prepend) = user
-      (uid, uname, phash) = user
+      (uid, uname, email, phash) = user
 
-      if username_check != uname:
+      if not (username_check == uname or email == email_check):
          return 2
 
       #checker = secpass.SecurePassword()
@@ -127,6 +186,20 @@ class PasswordDb:
          return 0
       return 3
 
+   def get_uid_from_uname_email(self, uname=None, email=None):
+      self.c.execute('SELECT objid FROM perm_users WHERE name = ?', (uname, ))
+      uId = self.c.fetchone()
+      return uId
+
+   #def rm_user_by_uname_email(self, uname=None, email=None):
+   #   pass
+
+   def rm_user_by_id(self, uid):
+      self.c.execute('DELETE FROM userdata WHERE objid = ?', (uid, ))
+      pass
+
+
+   #pass #end PasswordDb
 
 
 ###TESTS

@@ -1,9 +1,15 @@
 #from events import Event
 import os.path, sqlite3
-from .atomicid import ObjId
-from .dbdict import DbDict
-#from secpass import PasswordDb
-from .secpassdb import PasswordDb
+
+try:
+   from atomicid import ObjId
+   from dbdict import DbDict
+   from secpassdb import PasswordDb
+except Exception as e:
+   from .atomicid import ObjId
+   from .dbdict import DbDict
+   #from secpass import PasswordDb
+   from .secpassdb import PasswordDb
 
 import sqlite_wrapper
 
@@ -79,21 +85,9 @@ class UtilDb(sqlite_wrapper.Db):
       '''Dictionary get'''
       return self.dbdict.get(key)
 
-   def account_exists(self, uname=None, email=None):
-      '''Check if username exists'''
-      return self.accounts.check_if_user_exists(uname=uname, email=email)
-
-   #0 = success, 1 = username taken, 2 = bad username, 3 = bad password
-   def add_account(self, passw, uname=None, email=None):
-      '''Add account with username/password combo'''
-      return self.accounts.db_add_user(passw, uname=ename, email=email)
-
-   #0 = good password, 1 = username doesn't exist
-   #2 = username doesn't match (internal check)
-   #3 = password doesn't match, 4 = other error
-   def check_account_match(self, passw, uname=None, email=None):
-      '''Check if username matches password'''
-      return self.accounts.db_check_user(uname, passw)
 
    #pass
+
+
+#pass
 

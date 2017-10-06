@@ -52,6 +52,9 @@ def ls(path='.', rec=False):
 
    :param   rec: is recursive?
    :type    rec: bool
+
+   :return: list of folder names
+   :rtype: [string]
    """
 
    if not rec:
