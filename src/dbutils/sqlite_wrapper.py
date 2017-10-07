@@ -62,9 +62,11 @@ class Db:
       #self.c.close()
       pass
 
+   #either is_fetch, is_fetch_mult or fast_fetch. if all false, executes query and doesn't fetch result
    def exec_cmd(self, cmd, args=None,
                 is_fetch=False, is_fetch_mult=False,
-                mult_fetch_max_args=None):
+                mult_fetch_max_args=None,
+                fast_fetch=False):
       '''Execute database command
 
       '''
@@ -90,8 +92,11 @@ class Db:
                done = True
             else:
                ret.append(entry)
+            #pass end loop
 
          return ret
+      elif fast_fetch:
+         ret = self.c.fetchall()
       else:
          self.conn.commit()
       self.c.close()

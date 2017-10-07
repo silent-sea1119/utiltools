@@ -65,7 +65,7 @@ class PasswordDb:
       return False
 
    def _get_user_hash(self, uid):
-      '''Get password has from username'''
+      '''Get password has from uid'''
       self.c.execute("SELECT pass_hash FROM userdata WHERE objid = ?" % (uid, ))
       return self.c.fetchone()
 
