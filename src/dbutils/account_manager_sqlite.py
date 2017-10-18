@@ -147,8 +147,10 @@ class AccountManagerSqlite(AccountManager):
       if ret == 0:
          return mk_succ('SUCCESS')
 
-       if ret in [2,4,5] or True: #always do this
+      if (ret in [2,4,5]) or True: #always do this
          return mk_err('UNKNOWN', 'perms', {'perms_code':ret})
+
+      return mk_err('UNKNOWN')
 
       pass
 

@@ -173,7 +173,7 @@ class PasswordDb:
       if not user_exists:
          return 1
 
-      uid = self.get_uid_from_ename_email(username_check, email_check)
+      uid = self.get_uid_from_uname_email(username_check, email_check)
       if uid is None:
          return 5
 
@@ -198,13 +198,16 @@ class PasswordDb:
 
    def get_uid_from_uname_email(self, uname=None, email=None):
       if uname is not None:
-         self.c.execute('SELECT objid FROM perm_users WHERE name = ?', (uname, ))
+         self.c.execute('SELECT objid FROM userdata WHERE username = ?', (uname, ))
       elif email is not None:
-         self.c.execute('SELECT objid FROM perm_users WHERE email = ?', (email, ))
+         self.c.execute('SELECT objid FROM userdata WHERE email = ?', (email, ))
       else:
          return None
       uId = self.c.fetchone()
-      return uId
+      if uId is None or ((type(uId) is tuple) and uId[0] is None):
+         return None
+
+      return uId[0]
 
    #def rm_user_by_uname_email(self, uname=None, email=None):
    #   pass
