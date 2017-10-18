@@ -36,20 +36,22 @@ class AccountManagerSqlite(AccountManager):
 
       self.perms = UserPermissions(dbpath)
 
-
       #self.creds = PasswordDb(dbpath)
       self.creds = PasswordDb(self.perms.conn, get_next_id=self.perms.get_obj_id)
-
       pass
 
 
-   '''user_{get_id_from_name,exists,add,rm,check_login}'''
+   '''user_{get_id_from_name}'''
+
    def user_get_id_from_name(self, uname=None, email=None):
       return self.perms._get_uid(uname, email)
 
+   '''end user_{get_id_from_name}'''
+
+   '''user_{exists,add,rm,check_login}'''
+
    def user_exists(self, uname=None, email=None):
       return self.perms.user_exists(uname, email)
-
 
    def user_add(self, passw, uname=None, email=None):
       '''Add new user'''
@@ -105,18 +107,21 @@ class AccountManagerSqlite(AccountManager):
          return mk_err('MISSING_USERNAME_AND_EMAIL', 'creds')
 
 
-      if not (new_user_creds_ret == 0):
-         return mk_err('UNKNOWN', 'creds', {'creds_code':new_user_creds_ret})
+      if new_user_creds_ret == 0:
+         return mk_succ('SUCCESS')
 
-      return mk_succ('SUCCESS')
+      #if not (new_user_creds_ret == 0):
+      #   return mk_err('UNKNOWN', 'creds', {'creds_code':new_user_creds_ret})
 
+      return mk_err('UNKNOWN', 'creds', {'ret':(new_user_creds_ret, new_user_perms_ret)})
+
+      pass
 
    def idkwhat_this_is():
       #self.user_perms.
       #self.creds.
       #x
       pass
-
 
    def user_rm(self, uid):
       '''Remove user'''
@@ -146,6 +151,8 @@ class AccountManagerSqlite(AccountManager):
          return mk_err('UNKNOWN', 'perms', {'perms_code':ret})
 
       pass
+
+   '''end user_{exists,add,rm,check_login}'''
 
 
    #pass

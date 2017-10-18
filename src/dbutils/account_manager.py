@@ -34,9 +34,18 @@ class AccountManager:
    def __init__(self, dbpath):
       self.dbpath = dbpath
 
-   '''user_{get_id_from_name,exists,add,rm,check_login}'''
-   def user_get_id_from_name(self, uname=None, email=None):
+
+   #USER STUFF
+
+   '''user_get_{id_from_name_email,name_email_from_id}'''
+   def user_get_id_from_name_email(self, uname=None, email=None):
       abstract()  #pass
+   def user_get_name_email_from_id(self, uid):
+      '''Get user name and email from user id'''
+      abstract()
+      pass
+
+   '''user_{exists,add,rm,check_login/change_uname/change_email/change_pass}'''
    def user_exists(self, uname=None, email=None):
       '''Check if user exists'''
       #abstract()
@@ -53,30 +62,56 @@ class AccountManager:
       '''Check if login credentials match'''
       abstract()
       pass
+   def user_change_uname(self, uid, new_name):
+      '''Change username'''
+      abstract()
+      pass
+   def user_change_email(self, uid, new_email):
+      '''Change email'''
+      abstract()
+      pass
+   def user_change_pass(self, uid, new_pass):
+      '''Change user passwd'''
+      abstract()
+      pass
+
+   #END USER STUFF
 
 
-   '''group_{get_id_from_name,exists,add,rm,get_list}'''
+   #GROUP STUFF
+
+   '''group_get_{id_from_name, name_from_id}'''
    def group_get_id_from_name(self, gname):
       '''Get group id from group name'''
       abstract()
       pass
+   def group_get_name_from_id(self, gid):
+      '''Get group name from group id'''
+      abstract()
+      pass
+
+   '''group_{exists,add,rm,rename,get_list}'''
    def group_exists(self, gname):
       '''Check if group name exists'''
       abstract()
    def group_add(self, gname):
       '''Add new group'''
       abstract()
-
    def group_rm(self, gid):
       '''Remove group'''
       abstract()
       pass
+   def group_rename(self, gid, new_name):
+      '''Change group name'''
+      abstract()
+      pass
+
    def group_get_list(self):
       '''Get a list of all group id's'''
       abstract()
       pass
 
-   '''group_{add_user/rm_user}'''
+   '''group_{add_user/rm_user/get_member_users}'''
    def group_add_user(self, uid, gid):
       '''Add user to group'''
       abstract()
@@ -85,8 +120,7 @@ class AccountManager:
       '''Remove user from group'''
       abstract()
       pass
-
-   def group_get_members(self, gid):
+   def group_get_member_users(self, gid):
       '''Get members of a group'''
       abstract()
       pass
@@ -96,8 +130,22 @@ class AccountManager:
       abstract()
       pass
 
+   #END GROUP STUFF
 
-   '''resource_{exists/add/rm/add_group_perms}'''
+
+   #RESOURCE STUFF
+
+   '''resource_get_{id_from_name,name_from_id}'''
+   def resource_get_id_from_name(rname):
+      '''Get resource id from name'''
+      abstract()
+      pass
+   def resource_get_name_from_id(rid):
+      '''Get resource name from id'''
+      abstract()
+      pass
+
+   '''resource_{exists/add/rm/rename}'''
    def resource_exists(self, rname):
       '''Check if resource exists'''
       abstract()
@@ -110,22 +158,26 @@ class AccountManager:
       '''Remove resource by id'''
       abstract()
       pass
+   def resource_rename(self, rid, newname):
+      '''Rename resource'''
+      abstract()
+      pass
+
+   '''resource_{add/get}_group_perms'''
    def resource_add_group_perms(self, rid, gid, perms, remove_old):
       '''Set group permissions for resource'''
       abstract()
       pass
-
-   '''resource_{get_user_perm,get_group_perms,resource_get_groups}'''
-   def resource_get_user_perm(self, rid, uid):
-      '''Get resource permissions for user'''
-      abstract()
-      pass
-
    def resource_get_group_perms(self, rid, gid):
       '''Get resource permissions for a group'''
       abstract()
       pass
 
+   '''resource_{get_user_perm,get_groups}'''
+   def resource_get_user_perm(self, rid, uid):
+      '''Get resource permissions for user'''
+      abstract()
+      pass
    def resource_get_groups(self, rid):
       '''Get a list of groups a resource is member off'''
       abstract()
@@ -147,7 +199,10 @@ class AccountManager:
 
       return func_wrapper
 
-   #pass end AccountManager
+   #END RESOURCE STUFF
+
+
+   #pass #end AccountManager
 
 
 
