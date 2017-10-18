@@ -483,7 +483,7 @@ def reload_module(module):
    """from pycloak import shellutils. shellutils.reload_module(shellutils)"""
    importlib.reload(module)
 
-def recompile_pycloak(m=None, pycloak_path='~/work/pycloak'):
+def recompile_pycloak(m=None, pycloak_path='~/orgs/Kosandr/utiltools'):
    """Recompile and import module. Useful for quick command line testing without re-starting repl."""
    import sh
    current_path = cwd()

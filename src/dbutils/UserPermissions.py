@@ -26,7 +26,10 @@ For a clean authentication interface, check out dbutils/account_manager.py. It c
 Concrete implementation of AccountManager can be found in account_manager_sqlite.py. If you need something more heavy-duty, you can easily implement your own AccountManager with a different database or whatever you need.
 '''
 
+MIN_EMAIL_LEN = 7
+MIN_UNAME_LEN = 4
 
+from utiltools.miscutils import empty_str_to_none, none_to_val
 
 #users and groups need to be unique
 class UserPermissions(dbhelpers.UtilDb):
@@ -40,7 +43,7 @@ class UserPermissions(dbhelpers.UtilDb):
       #   return
 
       self.c.execute('''CREATE TABLE perm_groups (objid integer, name text)''')
-      self.c.execute('''CREATE TABLE perm_users (objid integer, name text)''')
+      self.c.execute('''CREATE TABLE perm_users (objid integer, name text, email text)''')
       self.c.execute('CREATE TABLE perm_group_members (objid integer, group_id integer, user_id integer)')
 
       self.c.execute('''CREATE TABLE perm_resources (objid integer, name text)''')
@@ -52,6 +55,8 @@ class UserPermissions(dbhelpers.UtilDb):
 
    def __init__(self, dbpath):
       #tname = 'perm'
+      self.dbpath = dbpath
+
       tname = 'perm_groups'
       self.tables_need_exist[tname] = self._init_perm_table
       super(UserPermissions, self).__init__(dbpath)
@@ -67,37 +72,86 @@ class UserPermissions(dbhelpers.UtilDb):
 
    def _get_uid(self, uname=None, email=None):
       '''Get id from user name'''
-      self.c.execute('SELECT objid FROM perm_users WHERE name = ?', (uname, ))
-      uid = self.c.fetchone()
-      if uid is None or ((type(uid) is tuple) and uid[0] is None):
-         return None
-      return uid[0]
 
-   #1 = success, 2 = failure already exists, 3 = failure bad name (short at least 4 chars)
-   def new_user(self, uname):
+      #uname = none_to_val(uname, 'null')
+      #email = none_to_val(email, 'null')
+
+      '''
+      if uname is not None and email is not None:
+         self.c.execute('SELECT objid FROM perm_users WHERE name = ? OR email = ?', (uname, email))
+         uid = self.c.fetchone()
+         if uid is None or ((type(uid) is tuple) and uid[0] is None):
+            return None
+
+         return uid[0]
+      '''
+
+      if uname is not None:
+         self.c.execute('SELECT objid FROM perm_users WHERE name = ?', (uname, ))
+         uid = self.c.fetchone()
+         if uid is None or ((type(uid) is tuple) and uid[0] is None):
+            return None
+
+         return uid[0]
+
+      elif email is not None:
+         self.c.execute('SELECT objid FROM perm_users WHERE email = ?', (email, ))
+         uid = self.c.fetchone()
+         if uid is None or ((type(uid) is tuple) and uid[0] is None):
+            return None
+
+         return uid[0]
+
+      return None
+
+   def _get_uname_email_from_uid(self, uid): #TODO
+
+      self.c.execute('SELECT name, email FROM perm_users WHERE objid = ?', (uid,))
+      uname_email = self.c.fetchone()
+      return uname_email
+
+   def new_user(self, uname=None, email=None):
       '''Create new user
 
       Return
          1 = success
-         2 = failure, user already exists
-         3 = failure (bad username)
+         2 = bad uname (too short; needs to be at least MIN_UNAME_LEN)
+         3 = bad email (too short; needs to be at least MIN_EMAIL_LEN)
+         4 = username already exists
+         5 = email already exists
+         6 = no email and no uname
       '''
-      if len(uname) < 4:
-         return 3
-      if self._get_uid(uname) is not None:
+
+      #uname = empty_str_to_none(uname)
+      #email = empty_str_to_none(email)
+
+      if uname is not None and len(uname) < MIN_UNAME_LEN:
+      #if uname is not 'null' and len(uname) < MIN_UNAME_LEN:
          return 2
-      self.c.execute('INSERT INTO perm_users VALUES (?, ?)', (self.get_obj_id(), uname))
+      if email is not None and len(email) < MIN_EMAIL_LEN:
+      #if email is not 'null' and len(email) < MIN_EMAIL_LEN:
+         return 3
+
+      if self._get_uid(uname) is not None:
+         return 4
+      if self._get_uid(email=email) is not None:
+         return 5
+
+      if uname is None and email is None:
+         return 6
+
+      self.c.execute('INSERT INTO perm_users VALUES (?, ?, ?)', (self.get_obj_id(), uname, email))
       self.conn.commit()
       return 1
 
-   def user_exists(self, uname):
+   def user_exists(self, uname=None, email=None): #TODO
       '''Check if username exists'''
-      if self._get_uid(uname) is not None:
+      if self._get_uid(uname, email) is not None:
          return True
       return False
 
    #1 = sucess, 2 = user never existed, (possibly 3 = user is admin)
-   def rm_user(self, uname):
+   def rm_user(self, uname=None, email=None):
       '''Remove user
 
       Return:
@@ -106,7 +160,7 @@ class UserPermissions(dbhelpers.UtilDb):
          3 = user is admin (future TODO)
       '''
 
-      self.c.execute('SELECT objid FROM perm_users WHERE name = ?', (uname, ))
+      self.c.execute('SELECT objid FROM perm_users WHERE name = ? or email = ?', (uname, email))
       uId = self.c.fetchone()
 
       uId = self._get_uid(uname)

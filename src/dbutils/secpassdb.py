@@ -119,7 +119,7 @@ class PasswordDb:
             #kkkk might need this #lock.release()
             return 5
       if email is not None:
-         if self.check_if_user_exists(email=email)
+         does_exist = self.check_if_user_exists(email=email)
          if does_exist:
             return 6
 
@@ -128,7 +128,7 @@ class PasswordDb:
 
       #kkkkkkkkk lock.release() #kkkkkkkkk might need this
 
-      args = (nextId, username, email, pass_hash) #pass_hash.replace('"', '""'))
+      args = (nextId, uname, email, pass_hash) #pass_hash.replace('"', '""'))
       cmd = 'INSERT INTO userdata VALUES (?, ?, ?, ?)'
       self.c.execute(cmd, args)
       self.conn.commit()
@@ -139,7 +139,7 @@ class PasswordDb:
 
       pass #end db_add_user
 
-   def check_user_login(self, username_check, email_check, password_check):
+   def check_user_login(self, password_check, username_check=None, email_check=None):
       '''Check username/password combo
 
       :param username_check: username to check
@@ -159,16 +159,25 @@ class PasswordDb:
          Statuses:
          * 0 = good password
          * 1 = username/email doesn't exist
-         * 2 = username/email doesn't match (internal)
-         * 3 password doesn't match
-         * 4 = other error
+         * 2 = username or email doesn't match database data (internal)
+         * 3 = password doesn't match
+         * 4 = other error (selecting user data failed)
+         * 5 = other error (getuid failed)
+         * 6 = both username_check and email_check is none
       '''
+
+      if username_check is None and email_check is None:
+         return 6
 
       user_exists = self.check_if_user_exists(username_check, email_check)
       if not user_exists:
          return 1
 
-      self.c.execute("SELECT * FROM userdata WHERE username = ?", (username_check, ))
+      uid = self.get_uid_from_ename_email(username_check, email_check)
+      if uid is None:
+         return 5
+
+      self.c.execute("SELECT * FROM userdata WHERE objid = ?", (uid, ))
       user = self.c.fetchone()
       if user is None:
          return 4
@@ -184,10 +193,16 @@ class PasswordDb:
       #checker.check_pass(password_check):
       if secpass.check_pass_match(password_check, phash):
          return 0
+
       return 3
 
    def get_uid_from_uname_email(self, uname=None, email=None):
-      self.c.execute('SELECT objid FROM perm_users WHERE name = ?', (uname, ))
+      if uname is not None:
+         self.c.execute('SELECT objid FROM perm_users WHERE name = ?', (uname, ))
+      elif email is not None:
+         self.c.execute('SELECT objid FROM perm_users WHERE email = ?', (email, ))
+      else:
+         return None
       uId = self.c.fetchone()
       return uId
 

@@ -1,4 +1,30 @@
 
+
+ACCOUNT_MANAGER_ERROR_TYPES = [
+   '',
+
+   ##making new account
+   'USERNAME_TOO_SHORT',
+   'EMAIL_TOO_SHORT',
+   'PASSWORD_TOO_SHORT', #perms only
+   'USERNAME_ALREADY_EXISTS',
+   'EMAIL_ALREADY_EXISTS',
+   #end making new account
+
+   #log-in in (perms only)
+   'USERNAME_DOESNT_EXIST', #unused
+   'EMAIL_DOESNT_EXIST', #unused
+   'USERNAME_OR_EMAIL_DOESNT_EXIST', #log-in check
+   'PASSWORD_MISMATCH',
+   #end log-in check
+
+   ##generic
+   'MISSING_USERNAME_AND_EMAIL', #need at least 1 to register/log-in
+   'UNKNOWN',
+   'SUCCESS'
+]
+
+
 def abstract():
    raise NotImplementedError("Abstract class, child must over-write")
 
@@ -13,12 +39,13 @@ class AccountManager:
       abstract()  #pass
    def user_exists(self, uname=None, email=None):
       '''Check if user exists'''
-      abstract()
+      #abstract()
+      pass
    def user_add(self, passw, uname=None, email=None):
       '''Add new user'''
       abstract()
       pass
-   def user_rm(self, uid);
+   def user_rm(self, uid):
       '''Remove user'''
       abstract()
       pass
@@ -32,7 +59,6 @@ class AccountManager:
    def group_get_id_from_name(self, gname):
       '''Get group id from group name'''
       abstract()
-
       pass
    def group_exists(self, gname):
       '''Check if group name exists'''

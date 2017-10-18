@@ -11,7 +11,7 @@ except Exception as e:
    #from secpass import PasswordDb
    from .secpassdb import PasswordDb
 
-import sqlite_wrapper
+from utiltools.dbutils import sqlite_wrapper
 
 def log(msg):
    print(msg)
@@ -30,7 +30,8 @@ class UtilDb(sqlite_wrapper.Db):
       #   self.need_init_all = True
       #   log('need to initialize all tables')
 
-      super().__init__(dbpath)
+      #super().__init__(dbpath)
+      super(UtilDb, self).__init__(dbpath)
 
    def setup(self):
       #self.conn = sqlite3.connect(dbpath, check_same_thread=False)

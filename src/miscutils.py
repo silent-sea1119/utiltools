@@ -33,7 +33,20 @@ def try_to_int(s, default=None):
 
 #enum_arg = string in enum_list or int index in enum_list
 def enum_helper(enum_list, enum_arg, to_index=None):
-   '''enumerate a list to/from index'''
+   '''enumerate a list to/from index
+
+	:param enum_list: list of elements
+	:type enum_list: list
+
+	:param enum_arg: number index or string in enum_list
+	:type enum_arg: int/str
+
+	:param to_index: Decides whether to return item at index or get index of item. If None, determined by enum_arg type
+	:type to_index: bool or None
+
+	:return: index of item enum_arg or item at index enum_arg
+   '''
+
    options = [x.lower() for x in enum_list]
 
    if to_index is None:
@@ -44,7 +57,7 @@ def enum_helper(enum_list, enum_arg, to_index=None):
       elif type(enum_arg) is int:
          to_index = False
       else:
-         raise "Bad type passed to surveydb.utils.enum_helper(%s)" % (str(enum_arg))
+         raise "Bad type passed to utiltools.miscutils.enum_helper(%s)" % (str(enum_arg))
 
    try:
       if to_index:
@@ -79,5 +92,16 @@ def gen_random_str(length):
    return ''.join(random.choice(char_pool) for _ in range(length))
 
 
+def empty_str_to_none(s):
+   '''If string is 0 characters long, return None, else return string'''
+   if type(s) is str and len(s) == 0:
+      return None
+   return s
+
+def none_to_val(s, val):
+   if s is None:
+      return val
+   else:
+      return s
 
 
