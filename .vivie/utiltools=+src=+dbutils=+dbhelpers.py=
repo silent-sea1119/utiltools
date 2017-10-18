@@ -108,29 +108,29 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 28,31fold
-25,33fold
-35,49fold
-51,51fold
-54,65fold
-67,69fold
-70,72fold
-73,74fold
-77,79fold
-81,83fold
-84,86fold
-88,88fold
-19,89fold
+25,34fold
+36,50fold
+52,52fold
+55,66fold
+68,70fold
+71,73fold
+74,75fold
+78,80fold
+82,84fold
+85,87fold
+89,89fold
+19,90fold
 19
 normal! zo
 25
 normal! zo
 25
 normal! zc
-let s:l = 87 - ((72 * winheight(0) + 32) / 65)
+let s:l = 94 - ((20 * winheight(0) + 7) / 14)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-87
+94
 normal! 0
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
