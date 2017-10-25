@@ -10,7 +10,7 @@ setup(
    version=VER,
    author='Konstantin Kowalski',
    author_email='kostelkow@gmail.com',
-   packages=['utiltools', 'utiltools.dbutils'], #, 'utiltools.shellutils'],
-   package_dir={'utiltools': '../../src', 'dbutils': '../../src/dbutils'},
+   packages=['utiltools', 'utiltools.dbutils', 'utiltools.bfsrs'], #, 'utiltools.shellutils'],
+   package_dir={'utiltools': '../../src', 'dbutils': '../../src/dbutils', 'bfsrs':'../../src/bfsrs'},
    description='Misc tools'
 )
