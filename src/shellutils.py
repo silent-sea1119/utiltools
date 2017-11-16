@@ -131,12 +131,14 @@ def _rm_single(path, ignore_errors=False):
          raise Exception('Trying to remove unknown file type')
       else:
          pass #trying to remove non-existant path
+   #pass
 
 #@expandhome
 def rm(*paths, ignore_errors=False):
    """Removes files and directories. Expands home"""
    for path in paths:
       _rm_single(path, ignore_errors)
+   pass
 
 @expandhome
 def cp(src, dst):
@@ -145,6 +147,7 @@ def cp(src, dst):
       shutil.copytree(src, dst)
    elif is_file(src):
       shutil.copy(src, dst)
+   pass
 
 @expandhome
 def mv(src, dst):
@@ -163,16 +166,18 @@ def cd(path):
    os.chdir(path)
 
 class cd_:
-    """Context manager for changing the current working directory"""
-    def __init__(self, newPath):
-        self.newPath = os.path.expanduser(newPath)
+   """Context manager for changing the current working directory"""
+   def __init__(self, newPath):
+      self.newPath = os.path.expanduser(newPath)
 
-    def __enter__(self):
-        self.savedPath = os.getcwd()
-        os.chdir(self.newPath)
+   def __enter__(self):
+      self.savedPath = os.getcwd()
+      os.chdir(self.newPath)
 
-    def __exit__(self, etype, value, traceback):
-        os.chdir(self.savedPath)
+   def __exit__(self, etype, value, traceback):
+      os.chdir(self.savedPath)
+
+   #pass
 
 ##PATH STUFF
 def cwd():
@@ -243,6 +248,7 @@ def write_file(filePath, data, binary=False):
       flags = 'wb'
    with open(filePath, flags) as f:
       return f.write(data)
+   #pass
 
 @expandhome1
 def read_file(filePath, nBytes=None, binary=False, createIfNeeded=False):
@@ -262,6 +268,24 @@ def read_file(filePath, nBytes=None, binary=False, createIfNeeded=False):
    elif filePath and createIfNeeded:
       assert not nBytes
       file(filePath, 'w').close()
+   return None
+
+import re
+@expandhome1
+def read_json_comments(path):
+   '''
+      { 'hi' : '3', //Test
+       'yo' : 323
+      }
+   '''
+   if path:
+      data = read_file(path)
+      if data:
+         data = re.sub(r'\\\n', '', data)
+         data = re.sub(r'//.*\n', '\n', data)
+         data = re.sub(r'\'', '"', data)
+         return json.loads(data)
+
    return None
 
 @expandhome1
@@ -495,6 +519,7 @@ def recompile_pycloak(m=None, pycloak_path='~/orgs/Kosandr/utiltools'):
    cd(current_path)
    if m is not None:
       reload_module(m)
+   pass
 
 @expandhome
 def if_exists_append_copy(path):
@@ -521,24 +546,25 @@ def tmp_folder(prefix='tmp', suffix=''):
    return tempfile.mkdtemp(suffix, prefix)
 
 class ProgressBar(object):
-    """Progress bar for terminal."""
-    def __init__(self, max_width = 20):
-        self.spinner = ['/', '-', '\\', '-']
-        self.spinner_tick = 0
-        self.max_width = max_width
+   """Progress bar for terminal."""
+   def __init__(self, max_width = 20):
+      self.spinner = ['/', '-', '\\', '-']
+      self.spinner_tick = 0
+      self.max_width = max_width
 
-    def update(self, p, label=""):
-        """Update progress with optional label"""
-        tw,th = shutil.get_terminal_size(fallback=(80,40))
-        self.spinner_tick += 1
-        i = int((p * self.max_width) / 100)
-        s = self.spinner[self.spinner_tick % len(self.spinner)]
-        bar = "%s%s%s" % ("".join(['='] * i), s, "".join([' '] * (self.max_width - i - 1)))
-        out = "\r[%s] %s" % (bar, label)
-        pad = "".join([" "] * (tw - len(out)))
-        sys.stdout.write("%s%s" % (out, pad))
-        sys.stdout.flush()
+   def update(self, p, label=""):
+      """Update progress with optional label"""
+      tw,th = shutil.get_terminal_size(fallback=(80,40))
+      self.spinner_tick += 1
+      i = int((p * self.max_width) / 100)
+      s = self.spinner[self.spinner_tick % len(self.spinner)]
+      bar = "%s%s%s" % ("".join(['='] * i), s, "".join([' '] * (self.max_width - i - 1)))
+      out = "\r[%s] %s" % (bar, label)
+      pad = "".join([" "] * (tw - len(out)))
+      sys.stdout.write("%s%s" % (out, pad))
+      sys.stdout.flush()
 
+   #pass
 
 def rand_str(length):
    '''Generate random string'''

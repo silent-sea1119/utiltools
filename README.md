@@ -23,3 +23,7 @@ assert (nums == expected_nums)
 
 
 pip3 install pexpect
+
+
+`make build; make install`
+

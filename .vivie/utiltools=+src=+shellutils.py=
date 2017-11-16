@@ -111,12 +111,86 @@ silent! normal! zE
 36,44fold
 47,63fold
 68,81fold
-let s:l = 486 - ((6 * winheight(0) + 11) / 23)
+84,86fold
+89,91fold
+94,96fold
+99,101fold
+104,114fold
+118,134fold
+137,141fold
+144,150fold
+153,155fold
+158,160fold
+164,166fold
+168,180fold
+183,185fold
+187,189fold
+191,193fold
+197,198fold
+202,203fold
+207,208fold
+210,217fold
+222,226fold
+229,235fold
+239,241fold
+244,251fold
+254,271fold
+275,289fold
+292,294fold
+297,303fold
+306,313fold
+323,330fold
+315,332fold
+335,341fold
+344,345fold
+348,354fold
+356,357fold
+360,370fold
+374,377fold
+381,382fold
+384,385fold
+388,399fold
+405,409fold
+411,413fold
+415,416fold
+418,419fold
+421,422fold
+424,435fold
+437,438fold
+439,440fold
+441,442fold
+443,444fold
+447,448fold
+450,457fold
+459,461fold
+465,469fold
+471,482fold
+484,486fold
+489,493fold
+495,497fold
+499,504fold
+506,508fold
+510,522fold
+525,542fold
+544,546fold
+550,553fold
+555,565fold
+548,567fold
+569,573fold
+315
+normal! zo
+315
+normal! zc
+548
+normal! zo
+548
+normal! zc
+let s:l = 360 - ((46 * winheight(0) + 21) / 42)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-486
-normal! 016|
+360
+normal! 0
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :
