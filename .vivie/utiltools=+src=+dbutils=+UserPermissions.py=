@@ -164,7 +164,7 @@ normal! zo
 normal! zc
 35
 normal! zc
-let s:l = 72 - ((42 * winheight(0) + 23) / 46)
+let s:l = 72 - ((37 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
