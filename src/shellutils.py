@@ -1,4 +1,4 @@
-import os, os.path, importlib, json, sys, tempfile
+import re, os, os.path, importlib, json, sys, tempfile
 import shutil, signal, subprocess, platform
 from functools import wraps
 
@@ -270,7 +270,6 @@ def read_file(filePath, nBytes=None, binary=False, createIfNeeded=False):
       file(filePath, 'w').close()
    return None
 
-import re
 @expandhome1
 def read_json_comments(path):
    '''
@@ -343,6 +342,15 @@ def get_mount_point(drive):
 #new thread non-block
 def func_thread(callback):
    p = Process(target=callback).start()
+
+
+def run_bash(cmd, get_out=True):
+   '''Run bash command and either print output to screen or return as a string (if get_out is True)'''
+   if get_out:
+      return os.popen(cmd).read()
+
+   return os.system(cmd) #prints return to screen
+
 
 #non-blocking
 def exec_prog(command):

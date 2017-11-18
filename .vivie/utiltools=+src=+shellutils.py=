@@ -135,62 +135,63 @@ silent! normal! zE
 239,241fold
 244,251fold
 254,271fold
-275,289fold
-292,294fold
-297,303fold
-306,313fold
-323,330fold
-315,332fold
-335,341fold
-344,345fold
-348,354fold
-356,357fold
-360,370fold
-374,377fold
-381,382fold
-384,385fold
-388,399fold
-405,409fold
-411,413fold
-415,416fold
-418,419fold
-421,422fold
-424,435fold
-437,438fold
-439,440fold
-441,442fold
-443,444fold
+274,288fold
+291,293fold
+296,302fold
+305,312fold
+322,329fold
+314,331fold
+334,340fold
+343,344fold
+347,352fold
+356,362fold
+364,365fold
+368,378fold
+382,385fold
+389,390fold
+392,393fold
+396,407fold
+413,417fold
+419,421fold
+423,424fold
+426,427fold
+429,430fold
+432,443fold
+445,446fold
 447,448fold
-450,457fold
-459,461fold
-465,469fold
-471,482fold
-484,486fold
-489,493fold
-495,497fold
-499,504fold
-506,508fold
-510,522fold
-525,542fold
-544,546fold
-550,553fold
-555,565fold
-548,567fold
-569,573fold
-315
+449,450fold
+451,452fold
+455,456fold
+458,465fold
+467,469fold
+473,477fold
+479,490fold
+492,494fold
+497,501fold
+503,505fold
+507,512fold
+514,516fold
+518,530fold
+533,550fold
+552,554fold
+558,561fold
+563,573fold
+556,575fold
+577,581fold
+314
 normal! zo
-315
+314
 normal! zc
-548
+556
 normal! zo
-548
+556
 normal! zc
-let s:l = 360 - ((46 * winheight(0) + 21) / 42)
+let s:l = 348 - ((52 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-360
-normal! 0
+348
+normal! 01|
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :
