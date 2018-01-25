@@ -31,7 +31,7 @@ setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
-setlocal noexpandtab
+setlocal expandtab
 if &filetype != 'python'
 setlocal filetype=python
 endif
@@ -98,7 +98,7 @@ endif
 setlocal tabstop=6
 setlocal tagcase=
 setlocal tags=
-setlocal textwidth=0
+setlocal textwidth=90
 setlocal thesaurus=
 setlocal noundofile
 setlocal undolevels=-123456
@@ -107,29 +107,18 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-5,9fold
-12,19fold
-22,26fold
-28,32fold
-36,48fold
-35,69fold
-72,74fold
-76,78fold
-80,81fold
-84,88fold
-91,94fold
-97,101fold
-103,107fold
-35
-normal! zo
-35
-normal! zc
-let s:l = 74 - ((71 * winheight(0) + 15) / 31)
+4,13fold
+15,20fold
+40,41fold
+43,44fold
+46,47fold
+49,50fold
+let s:l = 52 - ((17 * winheight(0) + 7) / 14)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-74
-normal! 01|
+52
+normal! 0
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :
