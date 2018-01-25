@@ -20,6 +20,17 @@ class Db:
 
    def setup(self):
       '''Virtual function for creating tables/etc'''
+
+      '''
+      columns = [
+         ['id', 'integer', 'PRIMARY KEY', 'AUTOINCREMENT'],
+         ['timestamp', 'integer'],
+         ['data', 'text'],
+         ['email', 'VARCHAR(35)']
+      ]
+      self.init_db_setup(columns)
+      '''
+
       raise NotImplementedError("Abstract class, child must over-write")
 
    def init_db_setup(self, columns):
@@ -127,8 +138,19 @@ class Db:
    #   cmd = "SELECT * FROM %s WHERE %s = ?" % (self.table_name, col_name)
    #pass
 
-   def insert_list(self, lst):
-      #self.c.executemany('INSERT INTO %s VALUES ('
+   def insert_list(self, rows):
+      cmd = 'INSERT INTO %s VALUES ('
+      row_len = len(rows[0])
+
+      for i in range(0 row_len-1):
+         cmd += '?, '
+         #pass
+
+      cmd += '?)'
+
+      self.c.executemany(cmd, rows)
+      self.conn.commit()
+
       pass
 
    def insert(self, vals):
