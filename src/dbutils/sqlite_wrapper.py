@@ -73,13 +73,6 @@ class Db:
       #self.c.close()
       pass
 
-   def get_single_by_column(self, col_name, col_val):
-      args = (self.table_name, col_name)
-      cmd = 'SELECT * FROM %s WHERE %s = ?' % args
-
-      data = self.exec_cmd(cmd, (col_val,), is_fetch=True)
-      return data
-
    #either is_fetch, is_fetch_mult or fast_fetch. if all false, executes query and doesn't fetch result
    def exec_cmd(self, cmd, args=None,
                 is_fetch=False, is_fetch_mult=False,
@@ -121,6 +114,18 @@ class Db:
 
       return ret
 
+
+   def get_single_by_column(self, col_name, col_val):
+      args = (self.table_name, col_name)
+      cmd = 'SELECT * FROM %s WHERE %s = ?' % args
+
+      data = self.exec_cmd(cmd, (col_val,), is_fetch=True)
+      return data
+
+   #def get_single_by_column(self, col_name, col_val):
+   #   cmd = "SELECT * FROM %s WHERE %s = ?" % (self.table_name, col_name)
+   #pass
+
    def search(self, search_col, search_val, search_max=100):
       '''Search table'''
 
@@ -131,12 +136,33 @@ class Db:
          'mult_fetch_max_args' : search_max
       }
       ret_val = self.exec_cmd(cmd, [search_val], **va_args)
-      return ret_val
-      pass
 
-   #def get_single_by_column(self, col_name, col_val):
-   #   cmd = "SELECT * FROM %s WHERE %s = ?" % (self.table_name, col_name)
-   #pass
+      return ret_val
+
+   def get_page_by_column(self, search_clause=None, search_vals=None, num_per_row=10, start_row=0):
+      '''search_clause:
+            "column_name LIKE ?"
+            "column_name = ?"
+         search_arg:
+            [column_val]
+      '''
+
+      cmd = 'SELECT * FROM %s ' % (self.table_name)
+
+      if search_clause is not None:
+         cmd += 'WHERE ' + search_clause
+
+      cmd += 'LIMIT ? OFFSET ?'
+
+      args = []
+      if search_vals is not None:
+         args = search_vals
+
+      args += [num_per_row, start_row]
+
+      data = self.exec_cmd(cmd, tuple(args), fast_fetch=True)
+
+      return data
 
    def insert_list(self, rows):
       cmd = 'INSERT INTO %s VALUES ('
