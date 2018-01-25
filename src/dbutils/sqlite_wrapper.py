@@ -62,6 +62,13 @@ class Db:
       #self.c.close()
       pass
 
+   def get_single_by_column(self, col_name, col_val):
+      args = (self.table_name, col_name)
+      cmd = 'SELECT * FROM %s WHERE %s = ?' % args
+
+      data = self.exec_cmd(cmd, (col_val,), is_fetch=True)
+      return data
+
    #either is_fetch, is_fetch_mult or fast_fetch. if all false, executes query and doesn't fetch result
    def exec_cmd(self, cmd, args=None,
                 is_fetch=False, is_fetch_mult=False,
@@ -136,7 +143,7 @@ class Db:
 
       cmd += ')'
 
-      print(cmd)
+      #print(cmd)
       self.exec_cmd(cmd, args=tuple(vals))
 
       pass #end insert

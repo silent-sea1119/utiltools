@@ -64,6 +64,8 @@ class WorkQueue(object):
       #elif self.ileni.debug:
       #   print('queue: empty queue')
 
+   #pass
+
 if __name__ == "__main__":
    #import gtk
    def msg(s): print(s)
