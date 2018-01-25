@@ -70,9 +70,11 @@ def enum_helper(enum_list, enum_arg, to_index=None):
 
 
 def datetime_to_unix(d):
+   '''DEPRECATED: moved to timeutils.py'''
    return time.mktime(d.timetuple())
 
 def unix_to_datetime(x):
+   '''DEPRECATED: moved to timeutils.py'''
    return datetime.datetime.fromtimestamp(int(x))
 
 def datetime_to_str(d):

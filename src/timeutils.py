@@ -27,3 +27,26 @@ def date_to_datetime(date):
 
 def datetime_from_str(str_dt):
    return datetime.strptime(str_dt, '%Y-%m-%d %H:%M:%S.%f')
+
+
+def datetime_to_unix(d):
+   return time.mktime(d.timetuple())
+
+def unix_to_datetime(x):
+   return datetime.datetime.fromtimestamp(int(x))
+
+
+
+def datetime_to_utc_tstamp(dt):
+   return datetime_to_unix(dt)
+
+def datetime_now():
+   return datetime.datetime.now()
+
+def datetime_utc_now():
+   return datetime.datetime.now()
+
+def tstamp_to_utc_datetime(tstamp):
+   return datetime.utcfromtimestamp(tstamp)
+
+
