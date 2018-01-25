@@ -168,7 +168,7 @@ class Db:
       cmd = 'INSERT INTO %s VALUES ('
       row_len = len(rows[0])
 
-      for i in range(0 row_len-1):
+      for i in range(0, row_len-1):
          cmd += '?, '
          #pass
 
