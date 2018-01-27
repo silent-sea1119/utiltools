@@ -167,7 +167,7 @@ class Db:
    def insert_list(self, rows):
       self.c = self.conn.cursor()
 
-      cmd = 'INSERT INTO %s VALUES ('
+      cmd = 'INSERT INTO %s VALUES (' % (self.table_name,)
       row_len = len(rows[0])
 
       for i in range(0, row_len-1):
@@ -175,6 +175,8 @@ class Db:
          #pass
 
       cmd += '?)'
+
+      print(cmd)
 
       self.c.executemany(cmd, rows)
       self.conn.commit()
