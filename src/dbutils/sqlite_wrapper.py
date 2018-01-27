@@ -165,6 +165,8 @@ class Db:
       return data
 
    def insert_list(self, rows):
+      self.c = self.conn.cursor()
+
       cmd = 'INSERT INTO %s VALUES ('
       row_len = len(rows[0])
 
@@ -176,6 +178,8 @@ class Db:
 
       self.c.executemany(cmd, rows)
       self.conn.commit()
+
+      self.c.close()
 
       pass
 
