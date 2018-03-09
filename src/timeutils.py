@@ -50,3 +50,23 @@ def tstamp_to_utc_datetime(tstamp):
    return datetime.utcfromtimestamp(tstamp)
 
 
+def file_format_utc_dt_to_str(dt, fmt=None):
+   '''See
+   https://stackoverflow.com/questions/7588511/format-a-datetime-into-a-string-with-milliseconds
+   https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior
+   #import pytz, datetime
+   https://stackoverflow.com/questions/79797/how-do-i-convert-local-time-to-utc-in-python
+
+   '''
+
+   if fmt is None:
+      fmt = '%Y_%m_%d_%H_%M_%S_%f'
+   return dt.strftime(fmt)
+
+def file_str_to_utc_dt(str_time, fmt=None):
+   if fmt is None:
+      fmt = '%Y_%m_%d_%H_%M_%S_%f'
+   return datetime.strptime(str_time, fmt)
+
+
+
