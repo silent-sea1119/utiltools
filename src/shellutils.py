@@ -623,6 +623,8 @@ import sh
 def du_bytes(path):
    return int(str(sh.cut(sh.du('-s', path), '-f1')).replace('\n', ''))
 
+du = du_bytes
+
 @expandglob
 def lsof(path):
    try:
