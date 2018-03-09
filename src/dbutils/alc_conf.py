@@ -39,6 +39,8 @@ class AlchemyConfig:
       signal.alarm(self.pool_recycle)
 
 
+
+
    def from_engine_path(engine_path, debug=False, pool_recycle=None):
       '''Generate AlchemyConfig from path to engine'''
 
@@ -61,6 +63,16 @@ class AlchemyConfig:
 
       return ret
 
+
+   def from_sqlite_file(db_path = None, debug=False, pool_recycle=None):
+
+      engine_path = 'sqlite://'
+      if db_path is not None:
+         engine_path = 'sqlite:///' + db_path
+
+      return AlchemyConfig.from_engine_path(engine_path, debug=debug)
+
+
    def from_eng_sesh(eng, sesh, debug=False):
       '''Generate AlchemyConfig from engine and session
       Keyword arguments:
@@ -68,15 +80,16 @@ class AlchemyConfig:
 
       return AlchemyConfig(eng, sesh, debug=debug)
 
+
    def from_creds(uname, passw, db_name, db_backend='mysql', debug = False):
       engine_path_args = (db_backend, uname, passw, db_name)
       engine_path = '%s://%s:%s@localhost/%s' % engine_path_args
       return AlchemyConfig.from_engine_path(engine_path, debug=debug)
 
    #first line uname, second line password
-   def from_creds_file_path(creds_path, db_name, debug = False):
+   def from_creds_file_path(creds_path, db_name, debug = False, db_backend='mysql'):
       user, passw = AlchemyConfig.get_mariadb_creds(creds_path)
-      return AlchemyConfig.from_creds(user, passw, db_name, debug = debug)
+      return AlchemyConfig.from_creds(user, passw, db_name, db_backend=db_backend, debug = debug)
 
    def get_mariadb_creds(creds_path):
       user = None
@@ -85,7 +98,7 @@ class AlchemyConfig:
          cred_lines = f.read().split('\n')
          user = cred_lines[0]
          passw = cred_lines[1]
-	return user, passw
+      return user, passw
 
    #pass
 
