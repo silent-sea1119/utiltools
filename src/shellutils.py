@@ -6,6 +6,43 @@ if platform.system() == 'Linux':
    import pwd, getpass, grp
 from multiprocessing import Process
 
+import glob
+
+def expandglob(func):
+   @wraps(func)
+   def wrapper(path, *args, **kwargs):
+      print('expanding', path)
+      globamonsta = glob.glob(path)
+
+      ret = []
+      for x in globamonsta:
+         good = False
+         try:
+            ret.append(func(x, *args, **kwargs))
+            good = True
+         except Exception as e:
+            pass
+         except sh.ErrorReturnCode_1 as e:
+            pass
+         finally:
+            if not good:
+               print('bad path:', path)
+               ret.append(None)
+            pass
+
+         pass #end for loop
+
+      if len(ret) == 1:
+         return ret[0]
+      elif len(ret) == 0:
+         return None
+      else:
+         return ret
+
+      '''globamonsta_str = ' '.join(globamonsta)
+      return func(globamonsta_str, *args, **kwargs)'''
+   return wrapper
+
 #wrapper for only first argument path
 def expandhome1(func):
    @wraps(func)
@@ -579,4 +616,20 @@ def rand_str(length):
    import string, random
    available_chars = string.ascii_uppercase + string.digits
    return ''.join(random.choice(available_chars) for _ in range(length))
+
+import sh
+
+@expandglob
+def du_bytes(path):
+   return int(str(sh.cut(sh.du('-s', path), '-f1')).replace('\n', ''))
+
+@expandglob
+def lsof(path):
+   try:
+      return sh.awk(sh.lsof(path, _err='/dev/null'), '{if(NR>1)print}') #lsof * 2>/dev/null | awk
+   except sh.ErrorReturnCode_1 as e:
+      #print('lsof exception:', e)
+      return None
+   pass
+
 
