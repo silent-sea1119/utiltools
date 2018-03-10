@@ -11,7 +11,7 @@ import glob
 def expandglob(func):
    @wraps(func)
    def wrapper(path, *args, **kwargs):
-      print('expanding', path)
+      #print('expanding', path)
       globamonsta = glob.glob(path)
 
       ret = []
@@ -621,7 +621,7 @@ import sh
 
 @expandglob
 def du_bytes(path):
-   return int(str(sh.cut(sh.du('-s', path), '-f1')).replace('\n', ''))
+   return int(str(sh.cut(sh.du('-s', path), '-f1')).replace('\n', ''))*(1024*1024)
 
 du = du_bytes
 
