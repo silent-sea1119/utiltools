@@ -69,9 +69,12 @@ class AlchemyConfig:
 
    def from_sqlite_file(db_path = None, debug=False, pool_recycle=None):
 
-      engine_path = 'sqlite://'
+      driver = 'sqlite:'
+      #driver = 'sqlite+pysqlite:'
+
+      engine_path = driver + '//'
       if db_path is not None:
-         engine_path = 'sqlite:///' + db_path
+         engine_path = driver + '///' + db_path
 
       return AlchemyConfig.from_engine_path(engine_path, debug=debug)
 
