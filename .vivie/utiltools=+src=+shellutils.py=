@@ -202,12 +202,12 @@ normal! zo
 normal! zc
 623
 normal! zo
-let s:l = 624 - ((134 * winheight(0) + 23) / 47)
+let s:l = 169 - ((97 * winheight(0) + 23) / 47)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-624
-normal! 082|
+169
+normal! 01|
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :
