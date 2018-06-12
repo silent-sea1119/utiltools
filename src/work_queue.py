@@ -11,6 +11,9 @@ class WorkQueue(object):
       self._busy = False
       self.last = None
 
+   def add(self, f, *args, **kwargs):
+      self.q.put((f, args, kwargs))
+
    def start(self):
       if self._busy:
          print('queue: cannot start queue: ' + self.last[0].__name__)
@@ -64,9 +67,12 @@ class WorkQueue(object):
       #elif self.ileni.debug:
       #   print('queue: empty queue')
 
+   def is_done(self):
+      return self.q.empty()
+
    #pass
 
-if __name__ == "__main__":
+def main():
    #import gtk
    def msg(s): print(s)
 
@@ -79,3 +85,7 @@ if __name__ == "__main__":
    wq.tick()
    #gtk.main()
 
+if __name__ == "__main__":
+   main()
+
+main()

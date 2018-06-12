@@ -13,17 +13,20 @@ def read_csv(fpath, is_dict=False, ignore_first_col=False):
       return [row for row in reader]
    return None
 
-def get_xlsx_files(path):
-   '''Get Excel files in given directory'''
+def get_file_exts(path, good_exts=[]):
+   '''
+      good_exts=['csv', 'pdf']
+   '''
+   #good_fnames = list(filter(lambda fname: fname.split('.')[-1] in good_exts, shu.ls(path)))
 
-   #xlsx_fnames = list(filter(lambda fname: fname.split('.')[-1] == 'xlsx', shu.ls(path)))
-
-   xlsx_fnames = []
+   good_fnames = []
    for fname in shu.ls(path):
-      if os.path.splitext(fname)[1].lower() == '.xlsx':
-         xlsx_fnames.append(fname)
+      if os.path.splitext(fname)[1].lower() in map(lambda x: '.' + x, good_exts):
+         good_fnames.append(fname)
 
-   return xlsx_fnames
+   return good_fnames
+
+
 
 def find_index(lst, test_func):
    '''like index, except takesa a predicate function test_func'''
