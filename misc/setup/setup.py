@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VER='0.0.1'
+VER='0.0.2'
 
 with open('version.txt', 'w') as f:
    f.write(VER)

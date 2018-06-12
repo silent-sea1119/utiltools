@@ -1,4 +1,6 @@
 
+`python3 -m twine upload --repository-url https://upload.pypi.org/legacy/ utiltools-0.0.1-py3-none-any.whl`
+
 ```python
 
 import scraper
