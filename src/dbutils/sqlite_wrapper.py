@@ -176,7 +176,7 @@ class Db:
 
       cmd += '?)'
 
-      print(cmd)
+      #print(cmd)
 
       self.c.executemany(cmd, rows)
       self.conn.commit()
